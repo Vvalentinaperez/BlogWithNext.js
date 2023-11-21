@@ -1,5 +1,4 @@
 import Link from "next/link";
-import React from "react";
 
 const CustomLink = (props) => {
   const href = props.href;
@@ -18,5 +17,6 @@ const CustomLink = (props) => {
 
 const MDXComponents = {
   a: CustomLink,
-  CustomLink,
 };
+
+export default MDXComponents;
