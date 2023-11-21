@@ -17,17 +17,22 @@ export async function getFiles(type) {
 //Slug (si el archivo esta fuera de una carpeta)
 //Type (si el archivo esta dentro de una carpeta)
 export async function getFileBySlug(type, slug) {
-  const source = slug //de donde viene el archivo
+  const source = slug
     ? fs.readFileSync(path.join(root, "data", type, `${slug}.mdx`), "utf8")
     : fs.readFileSync(path.join(root, "data", `${type}.mdx`), "utf8");
 
   const { data, content } = matter(source);
+
+  const remarkSlug = (await import("remark-slug")).default;
+  const remarkAutolinkHeadings = (await import("remark-autolink-headings"))
+    .default;
+
   const mdxSource = await serialize(content, {
     mdxOptions: {
       remarkPlugins: [
-        require("remark-slug"),
+        remarkSlug,
         [
-          require("remark-autolink-headings"),
+          remarkAutolinkHeadings,
           {
             linkProperties: {
               className: ["anchor"],
@@ -39,6 +44,7 @@ export async function getFileBySlug(type, slug) {
       rehypePlugins: [mdxPrism],
     },
   });
+
   return {
     mdxSource,
     frontMatter: {
